@@ -1,0 +1,58 @@
+#include <netdb.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdbool.h>
+#include <arpa/inet.h>
+
+#ifndef ASS4_SERVER_H
+#define ASS4_SERVER_H
+
+#define REQUESTS_SIZE 10
+#define BUFF_SIZE 255
+
+typedef void (*Handle)();
+
+typedef struct pair {
+    char* key;
+    char* val;
+} Pair;
+
+typedef struct map {
+    int numMap;
+    Pair* map;
+} Map;
+
+typedef struct control {
+    char* id;
+    char* info;
+    int numVisit;
+    char** visit;
+    unsigned int port;
+} Control;
+
+typedef struct roc {
+    char* id;
+    unsigned int port;
+    char** airports;
+} Roc;
+
+typedef struct client {
+    unsigned int port;
+    int socket_id;
+    Handle handle_input;
+    Map* dict;
+    Control* control;
+    Roc* roc;
+    sem_t* guard;
+} Client;
+
+int start_server(Client* client, bool sendPort);
+bool valid_input(char* line);
+bool send_port(Client* client);
+bool valid_port(int port);
+
+#endif //ASS4_SERVER_H

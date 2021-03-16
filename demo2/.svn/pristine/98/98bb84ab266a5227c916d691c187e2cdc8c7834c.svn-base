@@ -1,0 +1,14 @@
+#ifndef ASS3_MAIN_H
+#define ASS3_MAIN_H
+
+#include "board.h"
+#include "structs.h"
+
+struct Hub;
+
+typedef struct hub{
+    Board* board;
+    char** players;
+}Hub;
+
+#endif //ASS3_MAIN_H

@@ -1,0 +1,68 @@
+#include "player.h"
+#include "messages.h"
+
+/**
+ * Listens for game updates and responds with moves.
+ * @param player The player information.
+ * @return The exist status.
+ */
+int play(Player* player) {
+
+    while(player->alive) {
+        player->alive = false;
+    }
+
+    return 0;
+}
+
+/**
+ * Initialises the player information.
+ * @param player The player information.
+ * @return The exit status.
+ */
+int initialise(Player* player) {
+    fprintf(stdout, "^");
+    fflush(stdout);
+
+    if(!read_path(player, stdin)) {
+        fprintf(stderr, "Invalid path\n");
+        return 4;
+    }
+
+    print_board(player, stdout);
+
+    return play(player);
+}
+
+/**
+ * Checks that the staring arguments are correct.
+ * @param argc The number of arguments.
+ * @param argv The argument values.
+ * @return The exit status.
+ */
+int main(int argc, char** argv) {
+    Player* player = malloc(sizeof(Player));
+    player->alive = true;
+
+    // Incorrect number of input parameters.
+    if (argc != 3) {
+        fprintf(stderr, "Usage: player pcount ID\n");
+        return 1;
+    }
+
+    // Incorrect number of players.
+    player->numPlayers = atoi(argv[1]);
+    if (player->numPlayers < 1) {
+        fprintf(stderr, "Invalid player count\n");
+        return 2;
+    }
+
+    // Incorrect process id.
+    player->pid = atoi(argv[2]);
+    if (player->pid < 0 || player->pid >= player->numPlayers) {
+        fprintf(stderr, "Invalid ID\n");
+        return 3;
+    }
+
+    return initialise(player);
+}

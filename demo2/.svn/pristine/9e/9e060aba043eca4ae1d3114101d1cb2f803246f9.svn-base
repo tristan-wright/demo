@@ -1,0 +1,6 @@
+#include "b.h"
+
+void play_move(Game* game) {
+    printf("PLAYER B MOVE WAS CALLED");
+    return;
+}

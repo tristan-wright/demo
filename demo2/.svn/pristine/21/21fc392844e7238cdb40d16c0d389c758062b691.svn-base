@@ -1,0 +1,32 @@
+#ifndef ASS3_MESSAGES_H
+#define ASS3_MESSAGES_H
+
+#include "messages.h"
+#include "player.h"
+#include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+
+typedef struct stop{
+    char type[2];
+    int cap;
+    bool isBarrier;
+    char* positioned;
+}Stop;
+
+typedef struct player{
+    bool alive;
+    int numPlayers;
+    pid_t pid;
+    int numStops;
+    Stop* stops;
+}Player;
+
+bool read_path(Player* player, FILE* file);
+
+void print_board(Player* player, FILE* file);
+
+#endif //ASS3_MESSAGES_H

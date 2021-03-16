@@ -1,0 +1,69 @@
+#include "a.h"
+
+bool search_money(Game* game, int curStop, Player* player);
+bool search_v(Game* game, int curStop);
+int player_pos(Board* board, Player* player);
+
+void play_move(Game* game, Player* player) {
+    int curStop = player_pos(game->board, player);
+    // #1 case is user move choice.
+    if (player->money > 0 && search_money(game, curStop, player)) {
+        return;
+    }
+
+    // #2 case is user move choice.
+    Stop* nextStop = get_stop(game->board, player, 0);
+    nextStop++;
+    if (strcmp(nextStop->type, "Mo") == 0 && !at_capacity(nextStop)) {
+        chosen_move(position(game->board, 0,"Mo"), stdout);
+        return;
+    }
+
+    // #3 case is user move choice.
+    if (search_v(game, curStop)) {
+        return;
+    }
+}
+
+bool search_money(Game* game, int curStop, Player* player) {
+    for (int i = curStop; i < game->board->numStops; ++i) {
+        Stop* stop = &game->board->stops[i];
+        if (strcmp(stop->type, "Do") == 0) {
+            if (at_capacity(stop)) {
+                return false;
+            }
+            chosen_move(position(game->board, curStop, "Do"), stdout);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool search_v(Game* game, int curStop) {
+    for (int i = curStop + 1; i < game->board->numStops; ++i) {
+        Stop* stop = &game->board->stops[i];
+        if (strcmp(stop->type, "V1") == 0 && !at_capacity(stop)) {
+            chosen_move(position(game->board, curStop + 1, "V1"), stdout);
+            return true;
+        } else if (strcmp(stop->type, "V2") == 0 && !at_capacity(stop)) {
+            chosen_move(position(game->board, curStop + 1, "V2"), stdout);
+            return true;
+        } else if (strcmp(stop->type, "::") == 0 && !at_capacity(stop)) {
+            chosen_move(position(game->board, curStop + 1, "::"), stdout);
+            return true;
+        }
+    }
+    return false;
+}
+
+int player_pos(Board* board, Player* player) {
+    for (int i = 0; i < board->numStops; ++i) {
+        Stop* stop = &board->stops[i];
+        for (int j = 0; j < stop->numPlaced; ++j) {
+            if (stop->placed[j].pid == player->pid) {
+                return i;
+            }
+        }
+    }
+    return 0;
+}

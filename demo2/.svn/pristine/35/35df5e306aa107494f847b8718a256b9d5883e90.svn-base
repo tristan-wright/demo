@@ -1,0 +1,33 @@
+#include "a.h"
+
+void play_move(Game* game) {
+    Player* player = game->me;
+    int curStop = position(game->board, 0, (get_stop(game->board, player->pid))->type);
+
+    if (player->money > 0 && distance(game->board, player, "Do") > 0) {
+        chosen_move(position(game->board, 0, "Do"), stdout);
+        fprintf(stdout, "hey1");
+        return;
+    }
+
+    Stop* nextStop = get_stop(game->board, player->pid);
+    nextStop++;
+    if (strcmp(nextStop->type, "Mo") == 0 && !at_capacity(nextStop)) {
+        chosen_move(position(game->board, 0,"Mo"), stdout);
+        return;
+    }
+
+    for (int i = curStop + 1; i < game->board->numStops; ++i) {
+        Stop* stop = &game->board->stops[i];
+        if (strcmp(stop->type, "V1") == 0 && !at_capacity(stop)) {
+            chosen_move(position(game->board, curStop, "V1"), stdout);
+            return;
+        } else if (strcmp(stop->type, "V2") == 0 && !at_capacity(stop)) {
+            chosen_move(position(game->board, curStop, "V2"), stdout);
+            return;
+        } else if (strcmp(stop->type, "::") == 0 && !at_capacity(stop)) {
+            chosen_move(position(game->board, curStop, "::"), stdout);
+            return;
+        }
+    }
+}

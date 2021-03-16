@@ -1,0 +1,7 @@
+#ifndef ASS3_MAIN_H
+#define ASS3_MAIN_H
+
+#include "board.h"
+#include "structs.h"
+
+#endif //ASS3_MAIN_H

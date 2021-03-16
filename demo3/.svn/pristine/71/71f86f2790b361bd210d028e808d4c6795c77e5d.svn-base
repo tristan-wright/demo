@@ -1,0 +1,16 @@
+#include "server.h"
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdbool.h>
+
+#ifndef ASS4_MAPPER_H
+#define ASS4_MAPPER_H
+
+#define BUFF_SIZE 255
+
+
+
+void* handle_connection(void* data);
+
+#endif //ASS4_MAPPER_H

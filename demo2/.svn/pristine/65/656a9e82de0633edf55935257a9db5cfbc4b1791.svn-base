@@ -1,0 +1,9 @@
+#ifndef ASS3_B_H
+#define ASS3_B_H
+
+#include "structs.h"
+#include "board.h"
+
+bool others_later(Board* board, Player* player, int curStop);
+
+#endif //ASS3_B_H

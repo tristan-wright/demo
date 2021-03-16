@@ -1,0 +1,13 @@
+#ifndef ASS3_PLAYER_H
+#define ASS3_PLAYER_H
+
+#include "player.h"
+#include "messages.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+
+#endif //ASS3_PLAYER_H

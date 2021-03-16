@@ -1,0 +1,15 @@
+#include "control.h"
+
+int main(int argc, char** argv) {
+
+    if (argc > 4 || argc < 3) {
+        fprintf(stderr, "Usage: control2310 id info [mapper]\n");
+        return 1;
+    }
+
+    if (argc = 4) {
+
+    }
+
+    return 0;
+}

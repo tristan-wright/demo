@@ -1,0 +1,89 @@
+#include "main.h"
+
+bool read_deck(Board* board, char* deck) {
+    char* buff = calloc(256, sizeof(char));
+
+    FILE* file = fopen(deck, "r");
+    if (file == NULL) {
+        return false;
+    }
+    fgets(buff, 255, file);
+    board->numCards = atoi(&buff[0]);
+    if (board->numCards < 4) {
+        return false;
+    }
+
+    board->cards = calloc(board->numCards, sizeof(int));
+    for (int i = 1; i < board->numCards; ++i) {
+        if (isalpha(buff[i]) == 0) {
+            return false;
+        }
+        board->cards[i-1] = buff[i] - 64;
+    }
+
+    return true;
+}
+
+int game(Hub* hub) {
+    return 0;
+}
+
+
+int initialise(Hub* hub) {
+    for (int i = 0; i < hub->board->numPlayers; ++i) {
+        pid_t pid = fork();
+        if (pid < 0) {
+            exit(1);
+        } else if (pid == 0) {
+            //printf("Child (%d): %d\n", i + 1, getpid());
+            char* args[] = {hub->players[i], NULL};
+            if(execvp(args[0], args) == -1) {
+                exit(4);
+            }
+        }
+
+        int ret;
+        waitpid(pid, &ret, 0);
+
+        if (WIFEXITED(ret)) {
+            int code = WEXITSTATUS(ret);
+            //printf("EXIT STATUS OF CHILD %d\n", code);
+            if (code == 4) {
+                fprintf(stderr, "Error starting process\n");
+                return 4;
+            }
+        }
+    }
+    
+    return game(hub);
+}
+
+int main(int argc, char** argv) {
+    Hub* hub = malloc(sizeof(Hub));
+    Board* board = malloc(sizeof(Board));
+
+    if (argc < 4) {
+        fprintf(stderr, "Usage: 2310dealer deck path p1 {p2}\n");
+        return 1;
+    }
+    board->numPlayers = argc - 3;
+    hub->players = calloc(board->numPlayers, sizeof(char*));
+
+    if (!read_deck(board, argv[1])) {
+        fprintf(stderr, "Error reading deck\n");
+        return 2;
+    }
+
+    FILE* path = fopen(argv[2], "r");
+    if (path == NULL || !read_path(board, path)) {
+        fprintf(stderr, "Error reading path\n");
+        return 3;
+    }
+
+    for (int i = 3; i < board->numPlayers + 3; ++i) {
+        hub->players[i-3] = argv[i];
+    }
+
+    hub->board = board;
+    return initialise(hub);
+}

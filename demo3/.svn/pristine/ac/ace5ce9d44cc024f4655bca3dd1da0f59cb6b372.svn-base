@@ -1,0 +1,28 @@
+#include "control.h"
+
+void handle_input(Client* client, char* line, FILE* stream);
+
+int main(int argc, char** argv) {
+    Control* control = malloc(sizeof(Control));
+    Client* client = malloc(sizeof(Client));
+    client->control = control;
+    client->handle_input = handle_input;
+
+
+    if (argc > 4 || argc < 3) {
+        fprintf(stderr, "Usage: control2310 id info [mapper]\n");
+        return 1;
+    }
+
+    if (argc == 4) {
+        printf("fix me");
+    }
+
+    return start_server(client);
+}
+
+void handle_input(Client* client, char* line, FILE* stream) {
+    fprintf(stdout, "%s", line);
+    fflush(stdout);
+    return;
+}

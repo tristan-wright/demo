@@ -1,0 +1,19 @@
+CFLAGS = -Wall -pedantic -std=gnu99
+
+all:mapper2310
+
+# Dealer executable.
+mapper2310:mapper.o server.o
+		gcc $(CFLAGS) mapper.o server.o -g -o mapper2310
+
+# Main Object File
+mapper.o:mapper.c
+		gcc $(CFLAGS) -c -g mapper.c -o mapper.o
+
+# The Player file.
+server.o:server.c
+		gcc $(CFLAGS) -c -g server.c -o server.o
+
+clean:
+		rm mapper.o server.o
+		rm mapper2310

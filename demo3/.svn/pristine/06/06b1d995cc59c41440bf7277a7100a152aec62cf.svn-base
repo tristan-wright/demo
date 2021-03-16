@@ -1,0 +1,34 @@
+#include "roc.h"
+
+void handle_input(Client* client, char* line, FILE* stream);
+
+int main(int argc, char** argv) {
+    Roc* roc = malloc(sizeof(Roc));
+    Client* client = malloc(sizeof(Client));
+    client->handle_input = handle_input;
+
+
+    if (argc < 3) {
+        fprintf(stderr, "Usage: roc2310 id mapper {airports}\n");
+        return 1;
+    }
+
+    roc->id = calloc(strlen(argv[1]), sizeof(char));
+    roc->id = argv[1];
+
+    if(strcmp(argv[2], "-") != 0) {
+        int mapper = atoi(argv[2]);
+        if (!valid_port(mapper)) {
+            fprintf(stderr, "Invalid mapper port\n");
+            return 2;
+        }
+    }
+
+    client->roc = roc;
+
+    return 0;
+}
+
+void handle_input(Client* client, char* line, FILE* stream) {
+
+}

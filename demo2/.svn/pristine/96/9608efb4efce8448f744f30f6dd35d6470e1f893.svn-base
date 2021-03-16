@@ -1,0 +1,31 @@
+#ifndef ASS3_BOARD_H
+#define ASS3_BOARD_H
+
+#include "board.h"
+#include "structs.h"
+
+void add_card(Player* player, int card);
+
+bool read_path(Board* board, FILE* file);
+
+Player* move(Stop* from, Stop* to, Player* player);
+
+void print_board(Board* board, FILE* output);
+
+void print_player(Player* player, FILE* output);
+
+Player* get_player(Board* board, pid_t pid);
+
+Stop* get_stop(Board* board, pid_t pid);
+
+int position(Board* board, int start, char* type);
+
+int distance(Board* board, Player* player, char* type);
+
+void chosen_move(int position, FILE* output);
+
+bool at_capacity(Stop* stop);
+
+void output_scores(Board* board, FILE* output);
+
+#endif //ASS3_BOARD_H

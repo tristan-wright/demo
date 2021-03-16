@@ -1,0 +1,70 @@
+#include "server.h"
+
+void* handle_connection(void* data);
+
+int start_server(Client* client) {
+    struct addrinfo* ai = 0;
+    struct addrinfo SA;
+    struct sockaddr_in my_addr, client_addr;
+    sem_t lock;
+
+    int server_socket, client_socket;
+
+    memset(&SA, 0, sizeof(struct addrinfo));
+    SA.ai_family=AF_INET;
+    SA.ai_socktype=SOCK_STREAM;
+    SA.ai_flags=AI_PASSIVE;
+    if (getaddrinfo("localhost", 0, &SA, &ai)) {
+        return 1;
+    }
+
+    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (bind(server_socket, (struct sockaddr*)ai->ai_addr, sizeof(struct sockaddr))) {
+        return 3;
+    }
+
+    memset(&my_addr, 0, sizeof(struct sockaddr_in));
+    socklen_t len = sizeof(struct sockaddr_in);
+    if (getsockname(server_socket, (struct sockaddr*)&my_addr, &len)) {
+        return 4;
+    }
+    fprintf(stdout, "%u\n", ntohs(my_addr.sin_port));
+    fflush(stdout);
+
+    if (listen(server_socket, REQUESTS_SIZE)) {
+        return 4;
+    }
+
+    socklen_t client_addr_size = sizeof(struct sockaddr_in);
+
+    sem_init(&lock, 0, 1);
+    client->guard = &lock;
+    while (1) {
+        client_socket = accept(server_socket, (struct sockaddr*) &client_addr, &client_addr_size);
+
+        if (client_socket < 0) {
+            return 5;
+        }
+
+        client->socket_id = client_socket;
+
+        pthread_t tid;
+        pthread_create(&tid, 0 , handle_connection, client);
+
+    }
+
+    pthread_exit((void*) 0);
+
+    return 0;
+}
+
+void* handle_connection(void* data) {
+    Client* client = (Client*) data;
+    char line[BUFF_SIZE];
+
+    FILE* stream = fdopen(client->socket_id, "r+b");
+    while(fgets(line, BUFF_SIZE, stream) != NULL) {
+        client->handle_input(client, line, stream);
+    }
+    return NULL;
+}

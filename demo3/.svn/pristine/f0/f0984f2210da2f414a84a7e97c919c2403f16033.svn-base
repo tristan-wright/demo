@@ -1,0 +1,70 @@
+#include "control.h"
+
+void handle_input(Client* client, char* line, FILE* stream);
+void list_visit(Control* control, FILE* stream);
+void add_visit(Control* control, char* line);
+
+int main(int argc, char** argv) {
+    Control* control = malloc(sizeof(Control));
+    Client* client = malloc(sizeof(Client));
+    client->handle_input = handle_input;
+    control->visit = malloc(sizeof(char*));
+
+    if (argc > 4 || argc < 3) {
+        fprintf(stderr, "Usage: control2310 id info [mapper]\n");
+        return 1;
+    }
+
+    if (!valid_input(argv[1]) || !valid_input(argv[2])) {
+        fprintf(stderr, "Invalid char in parameter\n");
+        return 2;
+    }
+
+    control->id = calloc(strlen(argv[1]), sizeof(char));
+    control->info = calloc(strlen(argv[2]), sizeof(char));
+    strcpy(control->id, argv[1]);
+    strcpy(control->info, argv[2]);
+    client->control = control;
+
+    if (argc == 4) {
+        int mapper = atoi(argv[3]);
+
+        if (mapper <= 0 || mapper > 65535) {
+            fprintf(stderr, "Invalid port\n");
+            return 3;
+        } else {
+            client->control->port = mapper;
+        }
+    }
+    return start_server(client, true);
+}
+
+void handle_input(Client* client, char* line, FILE* stream) {
+    line[strlen(line) - 1] = '\0';
+    if (strcmp(line, "log") == 0){
+        list_visit(client->control, stream);
+    } else {
+        add_visit(client->control, line);
+    }
+
+    return;
+}
+
+void list_visit(Control* control, FILE* stream) {
+    char buff[BUFF_SIZE];
+    if (control->numVisit > 0) {
+        for (int i = 0; i < control->numVisit; ++i) {
+            sprintf(buff, "%s\n", control->visit[i]);
+            fputs(buff, stream);
+        }
+    }
+    fputs(".\n", stream);
+    fflush(stream);
+}
+
+void add_visit(Control* control, char* line) {
+    control->visit = realloc(control->visit, (control->numVisit + 1) * sizeof(char*));
+    control->visit[control->numVisit] = calloc(strlen(line), sizeof(char));
+    strcpy(control->visit[control->numVisit], line);
+    control->numVisit++;
+}
