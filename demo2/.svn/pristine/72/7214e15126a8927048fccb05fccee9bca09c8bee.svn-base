@@ -1,8 +1,0 @@
-#ifndef ASS3_B_H
-#define ASS3_B_H
-
-#include "structs.h"
-
-void play_move(Game* game);
-
-#endif //ASS3_B_H
